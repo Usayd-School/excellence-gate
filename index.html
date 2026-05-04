@@ -12,10 +12,8 @@
         header { background: white; padding: 20px 8%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
         
-        /* شريط البحث */
         .search-container { margin-bottom: 30px; }
-        .search-input { width: 100%; padding: 15px 25px; border-radius: 15px; border: 2px solid #e2e8f0; font-family: inherit; font-size: 1rem; outline: none; transition: 0.3s; }
-        .search-input:focus { border-color: var(--primary); }
+        .search-input { width: 100%; padding: 15px 25px; border-radius: 15px; border: 2px solid #e2e8f0; font-family: inherit; font-size: 1rem; outline: none; }
 
         .dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; margin-bottom: 50px; }
         .stat-card { background: white; padding: 30px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); text-align: center; border: 1px solid #e2e8f0; }
@@ -29,26 +27,22 @@
         
         .kpi-item { background: white; border-radius: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; overflow: hidden; }
         .kpi-main { padding: 20px 25px; display: grid; grid-template-columns: 40px 1fr auto auto auto; align-items: center; gap: 20px; cursor: pointer; }
-        .kpi-details { padding: 25px; display: none; border-top: 1px dashed #e2e8f0; background: #fafbfc; }
         
-        .status-badge { padding: 8px 16px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; }
+        .status-badge { padding: 8px 16px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; border: none; cursor: pointer; font-family: inherit; }
         .st-done { background: #d1fae5; color: #064e3b; }
         .st-work { background: #fef3c7; color: #92400e; }
         .st-none { background: #fee2e2; color: #991b1b; }
 
+        .kpi-details { padding: 25px; display: none; border-top: 1px dashed #e2e8f0; background: #fafbfc; }
         .tasks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-top: 20px; }
-        .task-card { background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 18px; display: flex; align-items: center; justify-content: space-between; transition: 0.3s; }
+        .task-card { background: white; border: 1px solid #e2e8f0; padding: 15px; border-radius: 18px; display: flex; align-items: center; justify-content: space-between; }
         .task-card.active { border-color: var(--success); background: #f0fdf4; }
         
-        .evidence-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
-        .evidence-link { display: inline-flex; align-items: center; gap: 8px; background: #eff6ff; color: var(--primary); padding: 8px 15px; border-radius: 10px; text-decoration: none; font-weight: 600; margin-left: 10px; margin-bottom: 10px; }
-
         .btn { padding: 10px 24px; border-radius: 14px; border: none; font-family: inherit; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-secondary { background: #f1f5f9; color: #475569; font-size: 0.8rem; }
         .action-icon { cursor: pointer; color: #94a3b8; transition: 0.2s; padding: 5px; }
-        .action-icon:hover { color: var(--danger); transform: scale(1.1); }
-        .edit-icon:hover { color: var(--warning); }
+        .action-icon:hover { color: var(--danger); }
     </style>
 </head>
 <body>
@@ -62,12 +56,10 @@
 </header>
 
 <div class="container">
-    <!-- شريط البحث الفوري -->
     <div class="search-container">
         <input type="text" id="searchInput" class="search-input" placeholder="ابحث عن مؤشر أو خطة عمل..." oninput="render()">
     </div>
 
-    <!-- لوحة الإحصائيات -->
     <div class="dashboard">
         <div class="stat-card">
             <div class="stat-main-text" id="total-perc">0%</div>
@@ -76,7 +68,7 @@
         <div class="stat-card sub-stats">
             <div class="sub-stat-box"><small>مكتملة</small><h2 id="c-done" style="color:var(--success); margin:5px 0">0</h2></div>
             <div class="sub-stat-box"><small>جاري العمل</small><h2 id="c-work" style="color:var(--warning); margin:5px 0">0</h2></div>
-            <div class="sub-stat-box"><small>بدون مهام</small><h2 id="c-none" style="color:var(--danger); margin:5px 0">0</h2></div>
+            <div class="sub-stat-box"><small>مطلوب</small><h2 id="c-none" style="color:var(--danger); margin:5px 0">0</h2></div>
         </div>
     </div>
 
@@ -109,7 +101,7 @@
 
     window.save = () => set(dbRef, window.appState);
 
-    // --- العمليات ---
+    // --- الوظائف ---
     window.addDomain = () => {
         const t = prompt("مسمى المجال:");
         if(t) { if(!window.appState.domains) window.appState.domains = []; window.appState.domains.push({title:t, kpis:[]}); save(); }
@@ -117,26 +109,23 @@
 
     window.addKPI = (dIdx) => {
         const n = prompt("مسمى المؤشر:");
-        if(n) { window.appState.domains[dIdx].kpis.push({name:n, tasks:[], evidence:[]}); save(); }
+        if(n) { window.appState.domains[dIdx].kpis.push({name:n, tasks:[], evidence:[], manualStatus: null}); save(); }
+    };
+
+    window.toggleManualStatus = (dIdx, kIdx) => {
+        const kpi = window.appState.domains[dIdx].kpis[kIdx];
+        const states = [null, 'done', 'work', 'none'];
+        let current = states.indexOf(kpi.manualStatus);
+        kpi.manualStatus = states[(current + 1) % states.length];
+        save();
     };
 
     window.addTask = (dIdx, kIdx) => {
-        const txt = prompt("أدخل مسمى المهمة/الخطة:");
+        const txt = prompt("أدخل مسمى الخطة:");
         if(txt) { 
             if(!window.appState.domains[dIdx].kpis[kIdx].tasks) window.appState.domains[dIdx].kpis[kIdx].tasks = [];
-            window.appState.domains[dIdx].kpis[kIdx].tasks.push({text:txt, done:false}); 
-            save(); 
+            window.appState.domains[dIdx].kpis[kIdx].tasks.push({text:txt, done:false}); save(); 
         }
-    };
-
-    window.editTask = (dIdx, kIdx, tIdx) => {
-        const old = window.appState.domains[dIdx].kpis[kIdx].tasks[tIdx].text;
-        const n = prompt("تعديل الخطة:", old);
-        if(n) { window.appState.domains[dIdx].kpis[kIdx].tasks[tIdx].text = n; save(); }
-    };
-
-    window.deleteTask = (dIdx, kIdx, tIdx) => {
-        if(confirm("حذف هذه المهمة؟")) { window.appState.domains[dIdx].kpis[kIdx].tasks.splice(tIdx, 1); save(); }
     };
 
     window.toggleTask = (dIdx, kIdx, tIdx) => {
@@ -144,14 +133,8 @@
         save();
     };
 
-    window.addEvidence = (dIdx, kIdx) => {
-        const url = prompt("الصق رابط الشاهد (Google Drive مثلاً):");
-        const title = prompt("مسمى الشاهد (مثلاً: صور الدورة):");
-        if(url && title) {
-            if(!window.appState.domains[dIdx].kpis[kIdx].evidence) window.appState.domains[dIdx].kpis[kIdx].evidence = [];
-            window.appState.domains[dIdx].kpis[kIdx].evidence.push({title, url});
-            save();
-        }
+    window.deleteTask = (dIdx, kIdx, tIdx) => {
+        if(confirm("حذف المهمة؟")) { window.appState.domains[dIdx].kpis[kIdx].tasks.splice(tIdx, 1); save(); }
     };
 
     window.toggleView = (id) => {
@@ -168,78 +151,53 @@
         root.innerHTML = '';
         let stats = { total:0, sum:0, done:0, work:0, none:0 };
 
-        if(!window.appState.domains) return;
+        window.appState.domains?.forEach((dom, dIdx) => {
+            let domHtml = `<div class="domain-wrapper"><div class="domain-header"><div class="domain-title"><i class="fas fa-folder"></i> ${dom.title}</div><button class="btn btn-secondary" onclick="addKPI(${dIdx})">+ مؤشر</button></div>`;
 
-        window.appState.domains.forEach((dom, dIdx) => {
-            let domHtml = `
-                <div class="domain-wrapper">
-                    <div class="domain-header">
-                        <div class="domain-title"><i class="fas fa-folder"></i> ${dom.title}</div>
-                        <button class="btn btn-secondary" onclick="addKPI(${dIdx})">+ إضافة مؤشر</button>
-                    </div>
-            `;
-
-            dom.kpis.forEach((kpi, kIdx) => {
+            dom.kpis?.forEach((kpi, kIdx) => {
                 if(query && !kpi.name.toLowerCase().includes(query)) return;
                 
-                stats.total++;
                 const tasks = kpi.tasks || [];
-                const doneCount = tasks.filter(t => t.done).length;
-                const perc = tasks.length ? Math.round((doneCount/tasks.length)*100) : 0;
+                const dCount = tasks.filter(t => t.done).length;
+                const autoPerc = tasks.length ? Math.round((dCount/tasks.length)*100) : 0;
                 
-                stats.sum += perc;
-                if(perc === 100) stats.done++;
-                else if(perc > 0) stats.work++;
-                else stats.none++;
+                // تحديد الحالة والنسبة بناءً على التحكم اليدوي أو التلقائي
+                let curStatus = kpi.manualStatus || (autoPerc === 100 ? 'done' : (autoPerc > 0 ? 'work' : 'none'));
+                let displayPerc = kpi.manualStatus === 'done' ? 100 : (kpi.manualStatus === 'work' ? 50 : (kpi.manualStatus === 'none' ? 0 : autoPerc));
+
+                stats.total++; stats.sum += displayPerc; stats[curStatus]++;
 
                 const kId = `k-${dIdx}-${kIdx}`;
-                const isOpen = (window.appState.expandedIds || []).includes(kId);
+                const isOpen = window.appState.expandedIds?.includes(kId);
 
                 domHtml += `
                     <div class="kpi-item">
                         <div class="kpi-main" onclick="toggleView('${kId}')">
                             <i class="fas fa-chevron-${isOpen?'up':'down'}"></i>
                             <div style="font-weight:700">${kpi.name}</div>
-                            <div style="font-weight:900; color:var(--primary)">${perc}%</div>
-                            <div class="status-badge ${perc===100?'st-done':(perc>0?'st-work':'st-none')}">
-                                ${perc===100?'مكتمل':(perc>0?'جاري':'مطلوب')}
-                            </div>
+                            <div style="font-weight:900; color:var(--primary)">${displayPerc}%</div>
+                            <button class="status-badge st-${curStatus}" onclick="event.stopPropagation(); toggleManualStatus(${dIdx}, ${kIdx})">
+                                ${curStatus==='done'?'مكتمل':(curStatus==='work'?'جاري':'مطلوب')}
+                            </button>
                         </div>
                         <div class="kpi-details" style="display:${isOpen?'block':'none'}">
+                            <div style="font-size:0.8rem; color:#64748b; margin-bottom:10px">* اضغط على زر الحالة أعلاه للتغيير اليدوي (تلقائي -> مكتمل -> جاري -> مطلوب)</div>
                             <div class="tasks-grid">
                                 ${tasks.map((t, tIdx) => `
                                     <div class="task-card ${t.done?'active':''}">
                                         <div style="cursor:pointer; flex:1" onclick="toggleTask(${dIdx}, ${kIdx}, ${tIdx})">
                                             <i class="${t.done?'fas fa-check-circle':'far fa-circle'}"></i> ${t.text}
                                         </div>
-                                        <div>
-                                            <i class="fas fa-pen action-icon edit-icon" onclick="editTask(${dIdx}, ${kIdx}, ${tIdx})"></i>
-                                            <i class="fas fa-trash-alt action-icon" onclick="deleteTask(${dIdx}, ${kIdx}, ${tIdx})"></i>
-                                        </div>
+                                        <i class="fas fa-trash-alt action-icon" onclick="deleteTask(${dIdx}, ${kIdx}, ${tIdx})"></i>
                                     </div>
                                 `).join('')}
-                                <div class="task-card" style="border:2px dashed var(--primary); color:var(--primary); justify-content:center; cursor:pointer" onclick="addTask(${dIdx}, ${kIdx})">
-                                    + إضافة مهمة (خطة)
-                                </div>
-                            </div>
-                            
-                            <div class="evidence-section">
-                                <h5 style="margin-top:0"><i class="fas fa-paperclip"></i> الشواهد والأدلة:</h5>
-                                ${(kpi.evidence || []).map(ev => `
-                                    <a href="${ev.url}" target="_blank" class="evidence-link">
-                                        <i class="fab fa-google-drive"></i> ${ev.title}
-                                    </a>
-                                `).join('')}
-                                <button class="btn btn-secondary" onclick="addEvidence(${dIdx}, ${kIdx})" style="margin-top:10px">
-                                    <i class="fas fa-link"></i> ربط شاهد جديد
-                                </button>
+                                <div class="task-card" style="border:2px dashed var(--primary); color:var(--primary); justify-content:center; cursor:pointer" onclick="addTask(${dIdx}, ${kIdx})">+ إضافة خطة</div>
                             </div>
                         </div>
                     </div>
                 `;
             });
-            domHtml += `</div>`;
-            root.innerHTML += domHtml;
+            root.innerHTML += domHtml + `</div>`;
         });
 
         document.getElementById('total-perc').innerText = (stats.total ? Math.round(stats.sum/stats.total) : 0) + '%';
