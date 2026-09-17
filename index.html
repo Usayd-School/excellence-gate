@@ -3,255 +3,839 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة التميز - مدرسة أسيد بن حضير</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>بوابة الطالب - التقرير الشامل</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
-        :root { --primary: #0369a1; --success: #059669; --warning: #d97706; --danger: #dc2626; --bg: #f8fafc; }
-        body { font-family: 'Cairo', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 100px; color: #334155; }
-        header { background: white; padding: 20px 8%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-        .dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; margin-bottom: 50px; }
-        .stat-card { background: white; padding: 30px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); text-align: center; border: 1px solid #e2e8f0; }
-        .stat-main-text { font-size: 3rem; font-weight: 900; color: var(--primary); line-height: 1; }
-        .sub-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .sub-stat-box { padding: 15px; border-radius: 20px; background: #fff; border: 1px solid #f1f5f9; }
-        .domain-wrapper { background: white; border-radius: 35px; padding: 35px; margin-bottom: 45px; border: 1px solid #e0f2fe; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        .domain-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .domain-title { font-size: 1.5rem; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 12px; }
-        .kpi-item { background: white; border-radius: 20px; margin-bottom: 15px; border: 1px solid #e2e8f0; overflow: hidden; }
-        .kpi-main { padding: 20px 25px; display: grid; grid-template-columns: 40px 1fr auto auto auto; align-items: center; gap: 20px; cursor: pointer; }
-        .kpi-details { padding: 0 25px 25px; display: none; border-top: 1px dashed #e2e8f0; background: #fafbfc; }
-        .status-badge { padding: 8px 16px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; }
-        .st-done { background: #d1fae5; color: #064e3b; }
-        .st-work { background: #fef3c7; color: #92400e; }
-        .st-none { background: #fee2e2; color: #991b1b; }
-        .progress-bar-bg { width: 100px; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; transition: 0.6s; }
-        .tasks-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 20px; }
-        .task-card { background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 15px; display: flex; align-items: center; justify-content: space-between; transition: 0.2s; }
-        .task-card.active { border-color: var(--success); background: #ecfdf5; }
-        .btn { padding: 10px 24px; border-radius: 14px; border: none; font-family: inherit; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        :root {
+            --primary: #0f4c5c;
+            --secondary: #e36414;
+            --success: #10b981;
+            --danger: #dc2626;
+            --dark: #1b263b;
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --whatsapp: #25D366;
+            --audio-btn: #3b82f6;
+        }
+
+        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        
+        body { 
+            margin: 0; background: var(--bg); color: var(--dark); 
+            min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .navbar { 
+            width: 100%; background: var(--primary); padding: 15px 20px; 
+            color: white; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container { max-width: 900px; width: 100%; padding: 20px; }
+
+        /* Login Section */
+        .login-box {
+            background: var(--card-bg); padding: 30px; border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; margin-top: 50px;
+            max-width: 500px; margin-left: auto; margin-right: auto;
+        }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        .inp { 
+            width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; 
+            font-size: 16px; font-weight: 600; outline: none; transition: 0.3s;
+        }
+        .inp:focus { border-color: var(--primary); }
+        .btn {
+            padding: 12px 25px; border: none; border-radius: 8px; font-weight: 800; 
+            font-size: 16px; cursor: pointer; transition: 0.3s; width: 100%;
+        }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-secondary { background: #f1f5f9; color: #475569; font-size: 0.8rem; }
-        .evidence-box { background: #eff6ff; border: 1px solid #dbeafe; border-radius: 15px; padding: 15px; margin-top: 20px; }
-        .evidence-link { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; font-weight: 700; font-size: 0.9rem; background: white; padding: 5px 12px; border-radius: 10px; margin: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .action-btn { color: #94a3b8; cursor: pointer; transition: 0.2s; padding: 5px; }
-        .action-btn:hover { color: var(--danger); }
-        .edit-btn:hover { color: var(--warning); }
+        .btn-primary:hover { background: #0b3a47; transform: translateY(-2px); }
+        
+        /* Dashboard Section */
+        #dashboard-section { display: none; text-align: center; animation: fadeIn 0.5s; }
+        .welcome-card {
+            background: var(--card-bg); padding: 30px; border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px;
+        }
+        
+        .counselor-img {
+            width: 120px; height: 120px; margin: 0 auto 15px;
+            background: #e2e8f0; border-radius: 50%; padding: 10px;
+            border: 4px solid var(--primary); display: flex; justify-content: center; align-items: center;
+            font-size: 60px; line-height: 1;
+        }
+
+        .main-action-btn {
+            background: linear-gradient(135deg, var(--secondary), #ff8c42); color: white;
+            border: none; padding: 20px 40px; border-radius: 50px; font-size: 20px; font-weight: 900;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(227, 100, 20, 0.3); transition: 0.3s;
+            animation: pulse 2s infinite; display: inline-block; margin-bottom: 30px;
+        }
+        .main-action-btn:hover { transform: scale(1.05); box-shadow: 0 15px 25px rgba(227, 100, 20, 0.4); }
+
+        /* Full Report Section */
+        #report-section { display: none; animation: slideUp 0.6s ease-out; text-align: right;}
+        .report-card {
+            background: var(--card-bg); border-radius: 20px; padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); position: relative; overflow: hidden;
+            border-top: 10px solid var(--primary);
+        }
+        
+        .report-header {
+            text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid var(--border);
+        }
+        .report-header h2 { color: var(--primary); margin: 0 0 10px 0; font-size: 28px; }
+        .report-header p { color: #64748b; margin: 0; font-weight: 600; font-size: 16px; }
+
+        /* Dedicated TTS Report Section */
+        .tts-section-card {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 35px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .tts-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #cbd5e1;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .tts-title {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tts-content-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            color: #334155;
+            font-size: 16px;
+            line-height: 1.9;
+            font-weight: 600;
+            white-space: pre-line;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        /* Top Indicators */
+        .status-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;}
+        .counselor-status { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border); flex-grow: 1;}
+        .status-icon { font-size: 50px; line-height: 1; }
+        .status-text h3 { margin: 0; color: var(--dark); font-size: 18px; }
+        .status-text p { margin: 5px 0 0; font-weight: 700; }
+
+        .rank-badge {
+            background: #fffbeb; border: 2px solid #fbbf24; color: #b45309;
+            padding: 15px 30px; border-radius: 12px; font-size: 24px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; min-width: 200px;
+        }
+
+        .indicators-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .indicator-box {
+            background: #fff; border: 1px solid var(--border); border-radius: 12px;
+            padding: 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .indicator-box h4 { margin: 0 0 15px; color: var(--dark); font-size: 16px; }
+        .points-value { font-size: 42px; font-weight: 900; color: var(--primary); line-height: 1; }
+        
+        .progress-container { width: 100%; background: var(--border); border-radius: 10px; height: 20px; overflow: hidden; margin-top: 10px; }
+        .progress-bar { height: 100%; background: var(--success); width: 0; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .progress-text { margin-top: 10px; font-weight: 900; font-size: 18px; color: var(--dark); }
+
+        /* Detailed Sections */
+        .section-title {
+            color: var(--primary); font-size: 20px; font-weight: 800; margin: 30px 0 15px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        
+        .evaluations-list { background: #f8fafc; border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .eval-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag { background: #ffffff; border: 1px solid var(--border); color: var(--primary); padding: 8px 15px; border-radius: 8px; font-weight: 800; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+
+        /* Notes Box */
+        .notes-container { display: flex; flex-direction: column; gap: 15px; }
+        .note-box { padding: 15px 20px; border-radius: 10px; border-right: 5px solid; background: #fff; border-top: 1px solid var(--border); border-left: 1px solid var(--border); border-bottom: 1px solid var(--border);}
+        .note-positive { border-right-color: var(--success); }
+        .note-negative { border-right-color: var(--danger); }
+        .note-general { border-right-color: var(--primary); }
+        .note-title { font-weight: 800; margin-bottom: 10px; font-size: 16px;}
+        .note-positive .note-title { color: var(--success); }
+        .note-negative .note-title { color: var(--danger); }
+        .note-general .note-title { color: var(--primary); }
+        .note-list { margin: 0; padding-right: 25px; color: #334155; font-weight: 600; font-size: 15px; line-height: 1.6;}
+        .note-list li { margin-bottom: 8px; }
+
+        /* Homework Box */
+        .hw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 600px) { .hw-grid { grid-template-columns: 1fr; } }
+        .hw-box { padding: 15px; border-radius: 10px; border: 1px solid; }
+        .hw-done { background: #f0fdf4; border-color: #bbf7d0; }
+        .hw-not-done { background: #fef2f2; border-color: #fecaca; }
+        .hw-title { font-weight: 800; margin-bottom: 10px; font-size: 15px;}
+        .hw-done .hw-title { color: #166534; }
+        .hw-not-done .hw-title { color: #991b1b; }
+        .hw-list { margin: 0; padding-right: 20px; color: #1e293b; font-weight: 700; font-size: 14px;}
+        .hw-list li { margin-bottom: 5px; }
+
+        .btn-print { background: var(--dark); color: white; padding: 12px 25px; font-size: 16px; width: auto; border: none; border-radius: 8px; cursor: pointer;}
+        .btn-audio { background: var(--audio-btn); color: white; padding: 12px 25px; font-size: 16px; width: auto; display: flex; align-items: center; gap: 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s;}
+        .btn-audio:hover { background: #2563eb; transform: translateY(-2px); }
+        .btn-whatsapp { background: var(--whatsapp); color: white; padding: 12px 25px; font-size: 16px; width: auto; display: flex; align-items: center; gap: 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: 800; transition: 0.3s;}
+        .btn-whatsapp:hover { background: #1ebe57; transform: translateY(-2px); }
+        
+        .btn-copy { background: #0284c7; color: white; padding: 8px 16px; font-size: 14px; border-radius: 6px; border: none; cursor: pointer; font-weight: 700; transition: 0.2s;}
+        .btn-copy:hover { background: #0369a1;}
+        
+        .actions-container {
+            display: flex; justify-content: center; gap: 15px; margin-top: 40px; flex-wrap: wrap;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        @media print {
+            body { background: white; }
+            .navbar, .login-box, .main-action-btn, .actions-container, .welcome-card { display: none !important; }
+            #dashboard-section { display: block; }
+            #report-section { display: block !important; animation: none; text-align: right;}
+            .report-card { border: none; box-shadow: none; padding: 0; border-top: 15px solid var(--primary); border-bottom: 15px solid var(--primary); padding-top: 20mm; padding-bottom: 20mm;}
+            .progress-container { border: 1px solid var(--dark); }
+            .hw-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <div>
-        <h1 style="margin:0; font-size:1.6rem; font-weight:900; color:var(--primary)">مدرسة أسيد بن حضير</h1>
-        <small><i class="fas fa-cloud-upload-alt"></i> نظام التقييم الذاتي المتصل سحابياً</small>
-    </div>
-    <button class="btn btn-primary" onclick="addDomain()"><i class="fas fa-folder-plus"></i> إضافة مجال تقييم</button>
-</header>
+<nav class="navbar">
+    <h1>🎓 بوابة التقرير الشامل للطالب</h1>
+</nav>
 
 <div class="container">
-    <div class="dashboard">
-        <div class="stat-card">
-            <div class="stat-main-text" id="total-perc">0%</div>
-            <p style="margin-top:10px; font-weight:700; color:#64748b">مستوى الأداء العام</p>
+    <div id="login-section" class="login-box">
+        <h2 style="color: var(--primary); margin-top:0;">تسجيل الدخول</h2>
+        <div class="form-group">
+            <label style="display:block; margin-bottom:8px; font-weight:bold;">الفصل الدراسي</label>
+            <select id="classSelect" class="inp" onchange="loadStudents()">
+                <option value="">جاري التحميل...</option>
+            </select>
         </div>
-        <div class="stat-card sub-stats">
-            <div class="sub-stat-box"><small>مؤشرات مكتملة</small><h2 id="c-done" style="color:var(--success); margin:5px 0">0</h2></div>
-            <div class="sub-stat-box"><small>جاري العمل</small><h2 id="c-work" style="color:var(--warning); margin:5px 0">0</h2></div>
-            <div class="sub-stat-box"><small>غير مكتملة</small><h2 id="c-none" style="color:var(--danger); margin:5px 0">0</h2></div>
+        <div class="form-group">
+            <label style="display:block; margin-bottom:8px; font-weight:bold;">اسم الطالب</label>
+            <select id="studentSelect" class="inp" disabled>
+                <option value="">اختر الفصل أولاً</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="loginStudent()">دخول إلى مساحتي 🚀</button>
+    </div>
+
+    <div id="dashboard-section">
+        <div class="welcome-card">
+            <div class="counselor-img">👨‍🏫</div>
+            <h2 id="welcomeName">أهلاً بك!</h2>
+            <p style="color: #64748b; font-weight: 600;">المستشار التربوي يرحب بك، انقر بالأسفل لعرض تقريرك الشامل.</p>
+        </div>
+
+        <button class="main-action-btn" onclick="requestReport()">استعرض تقريرك الشامل ✨</button>
+
+        <div id="report-section">
+            <div class="report-card">
+                
+                <div class="report-header">
+                    <h2>التقرير التحليلي الشامل للمستوى الأكاديمي</h2>
+                    <p>الطالب: <strong id="rStudentName"></strong> | الصف: <strong id="rClassName"></strong></p>
+                </div>
+
+                <div class="status-header">
+                    <div class="counselor-status">
+                        <div class="status-icon" id="counselorEmoji">⏳</div>
+                        <div class="status-text">
+                            <h3>رأي المستشار التربوي</h3>
+                            <p id="counselorMessage">جاري تحليل التقييم...</p>
+                        </div>
+                    </div>
+                    <div class="rank-badge" id="studentRank">المركز: -</div>
+                </div>
+
+                <div class="tts-section-card">
+                    <div class="tts-header">
+                        <div class="tts-title">
+                            <span>📢 النص المكتوب للتقرير (جاهز للتحويل الصوتي TTS)</span>
+                        </div>
+                        <button class="btn-copy" onclick="copyTTSText()">📋 نسخ النص</button>
+                    </div>
+                    <div class="tts-content-box" id="ttsReportContent">جاري إعداد وصياغة النص...</div>
+                </div>
+
+                <div class="indicators-grid">
+                    <div class="indicator-box">
+                        <h4>النقاط التفاعلية 🌟</h4>
+                        <div class="points-value" id="studentPoints">0</div>
+                    </div>
+                    <div class="indicator-box">
+                        <h4>مؤشر إنجاز المهام 📚</h4>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="hwProgressBar"></div>
+                        </div>
+                        <div class="progress-text" id="hwProgressText">0%</div>
+                    </div>
+                </div>
+
+                <div class="section-title">🏆 الإنجازات والأوسمة المكتسبة</div>
+                <div class="evaluations-list">
+                    <div class="eval-tags" id="studentTags">
+                    </div>
+                </div>
+
+                <div class="section-title">📝 تقييم المستوى وملاحظات المعلمين</div>
+                <div class="notes-container" id="notesContainer">
+                </div>
+
+                <div class="section-title">📋 تفاصيل إنجاز المهام والواجبات</div>
+                <div class="hw-grid">
+                    <div class="hw-box hw-done" id="hwDoneBox">
+                        <div class="hw-title">✅ مهام تم إنجازها بتميز:</div>
+                        <ul class="hw-list" id="hwDoneList"></ul>
+                    </div>
+                    <div class="hw-box hw-not-done" id="hwNotDoneBox">
+                        <div class="hw-title">❌ مهام تحتاج إلى إنجاز:</div>
+                        <ul class="hw-list" id="hwNotDoneList"></ul>
+                    </div>
+                </div>
+
+                <div class="actions-container">
+                    <button class="btn btn-print" onclick="window.print()">🖨️ طباعة التقرير</button>
+                    <button class="btn btn-audio" onclick="playVoiceReport()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                        الاستماع للتقرير
+                    </button>
+                    <button class="btn btn-whatsapp" onclick="sendToParentWhatsApp()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                        إرسال لولي الأمر
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
-    <div id="app-root"></div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCIW17B6y6sG_bdUFqF7FWoVIY9ynXv1B4",
+    authDomain: "myschoolproject-4ad92.firebaseapp.com",
+    databaseURL: "https://myschoolproject-4ad92-default-rtdb.firebaseio.com",
+    projectId: "myschoolproject-4ad92"
+};
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAuD5HW9lusc4RuaHuVeiHC5YP4KMO5klo",
-        authDomain: "excellencegate-99f89.firebaseapp.com",
-        projectId: "excellencegate-99f89",
-        storageBucket: "excellencegate-99f89.firebasestorage.app",
-        messagingSenderId: "1031127698735",
-        appId: "1:1031127698735:web:04976917d5017d2b2265da",
-        databaseURL: "https://excellencegate-99f89-default-rtdb.firebaseio.com"
-    };
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const database = firebase.database();
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const dbRef = ref(db, 'school_data');
+let localData = { classes: [], students: {}, evaluations: {} };
+let loggedInStudent = { id: null, class: null, name: null };
 
-    window.appState = { domains: [], expandedIds: [] };
+// =========================================================================
+// بيانات ElevenLabs (استخدم المفتاح إذا قمت بالترقية، وإلا سيعمل الصوت المجاني للمتصفح كبديل)
+// =========================================================================
+const ELEVENLABS_API_KEY = "e3dce6cb0fac08cf7d300b80826cc4f337ef68e76dddfd6e8751183a7caeb38b"; 
+const ELEVENLABS_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
 
-    onValue(dbRef, (snap) => { if (snap.val()) { window.appState = snap.val(); render(); } });
 
-    window.save = () => set(dbRef, window.appState);
-
-    // --- إدارة المجالات (المجال) ---
-    window.addDomain = () => {
-        const t = prompt("أدخل مسمى المجال الجديد:");
-        if (t) { if (!window.appState.domains) window.appState.domains = []; window.appState.domains.push({ title: t, kpis: [] }); save(); }
-    };
-
-    window.editDomain = (dIdx) => {
-        const t = prompt("تعديل مسمى المجال:", window.appState.domains[dIdx].title);
-        if (t) { window.appState.domains[dIdx].title = t; save(); }
-    };
-
-    window.deleteDomain = (dIdx) => {
-        if (confirm("سيتم حذف المجال وجميع مؤشراته، هل أنت متأكد؟")) { window.appState.domains.splice(dIdx, 1); save(); }
-    };
-
-    // --- إدارة المؤشرات ---
-    window.addKPI = (dIdx) => {
-        const n = prompt("أدخل مسمى المؤشر:");
-        if (n) { if (!window.appState.domains[dIdx].kpis) window.appState.domains[dIdx].kpis = []; 
-        window.appState.domains[dIdx].kpis.push({ name: n, tasks: [], evidence: [], manualStatus: null }); save(); }
-    };
-
-    window.editKPI = (dIdx, kIdx) => {
-        const n = prompt("تعديل مسمى المؤشر:", window.appState.domains[dIdx].kpis[kIdx].name);
-        if (n) { window.appState.domains[dIdx].kpis[kIdx].name = n; save(); }
-    };
-
-    window.deleteKPI = (dIdx, kIdx) => {
-        if (confirm("حذف المؤشر؟")) { window.appState.domains[dIdx].kpis.splice(kIdx, 1); save(); }
-    };
-
-    // --- إدارة المهام ---
-    window.addTask = (dIdx, kIdx) => {
-        const txt = prompt("أدخل نص المهمة:");
-        if (txt) { if (!window.appState.domains[dIdx].kpis[kIdx].tasks) window.appState.domains[dIdx].kpis[kIdx].tasks = [];
-        window.appState.domains[dIdx].kpis[kIdx].tasks.push({ text: txt, done: false }); save(); }
-    };
-
-    window.toggleTask = (dIdx, kIdx, tIdx) => {
-        window.appState.domains[dIdx].kpis[kIdx].tasks[tIdx].done = !window.appState.domains[dIdx].kpis[kIdx].tasks[tIdx].done;
-        save();
-    };
-
-    window.deleteTask = (dIdx, kIdx, tIdx) => {
-        window.appState.domains[dIdx].kpis[kIdx].tasks.splice(tIdx, 1); save();
-    };
-
-    // --- إدارة الشواهد ---
-    window.addEvidence = (dIdx, kIdx) => {
-        const title = prompt("اسم الشاهد (مثلاً: محضر اجتماع):");
-        const url = prompt("رابط الشاهد (Google Drive / OneDrive):");
-        if (title && url) {
-            if (!window.appState.domains[dIdx].kpis[kIdx].evidence) window.appState.domains[dIdx].kpis[kIdx].evidence = [];
-            window.appState.domains[dIdx].kpis[kIdx].evidence.push({ title, url }); save();
+window.onload = async function() {
+    try {
+        const classesSnap = await database.ref('classes').once('value');
+        const cData = classesSnap.val() || {};
+        const classSelect = document.getElementById('classSelect');
+        classSelect.innerHTML = '<option value="">-- اختر الفصل --</option>';
+        
+        for(let sId in cData) {
+            for(let cId in cData[sId]) {
+                let cName = cData[sId][cId].className;
+                if(!localData.classes.includes(cName)) {
+                    localData.classes.push(cName);
+                    classSelect.innerHTML += `<option value="${cName}">${cName}</option>`;
+                }
+            }
         }
-    };
+        const stdSnap = await database.ref('students').once('value');
+        localData.students = stdSnap.val() || {};
+        const evalsSnap = await database.ref('evaluations').once('value');
+        localData.evaluations = evalsSnap.val() || {};
+    } catch (error) { 
+        console.error("خطأ في الاتصال بقاعدة البيانات."); 
+        document.getElementById('classSelect').innerHTML = '<option>حدث خطأ في التحميل</option>';
+    }
+};
 
-    window.deleteEvidence = (dIdx, kIdx, eIdx) => {
-        window.appState.domains[dIdx].kpis[kIdx].evidence.splice(eIdx, 1); save();
-    };
+function loadStudents() {
+    const clsName = document.getElementById('classSelect').value;
+    const stdSelect = document.getElementById('studentSelect');
+    stdSelect.innerHTML = '<option value="">-- اختر اسمك --</option>';
+    stdSelect.disabled = true;
+    if(!clsName) return;
 
-    window.setStatus = (dIdx, kIdx, status) => {
-        window.appState.domains[dIdx].kpis[kIdx].manualStatus = status; save();
-    };
+    let hasStudents = false;
+    for(let key in localData.students) {
+        if(localData.students[key].className === clsName) {
+            hasStudents = true;
+            stdSelect.innerHTML += `<option value="${key}">${localData.students[key].studentName}</option>`;
+        }
+    }
+    if(hasStudents) stdSelect.disabled = false;
+}
 
-    window.toggleView = (id) => {
-        if (!window.appState.expandedIds) window.appState.expandedIds = [];
-        const i = window.appState.expandedIds.indexOf(id);
-        if (i > -1) window.appState.expandedIds.splice(i, 1);
-        else window.appState.expandedIds.push(id);
-        save();
-    };
+function loginStudent() {
+    const clsName = document.getElementById('classSelect').value;
+    const stdKey = document.getElementById('studentSelect').value;
+    
+    if(!clsName || !stdKey) { alert("الرجاء اختيار الفصل والاسم للدخول."); return; }
+    
+    loggedInStudent = { id: stdKey, class: clsName, name: localData.students[stdKey].studentName };
+    
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('dashboard-section').style.display = 'block';
+    
+    const firstName = loggedInStudent.name.split(' ')[0];
+    document.getElementById('welcomeName').innerText = `أهلاً بك، ${firstName}!`;
+    
+    document.getElementById('rStudentName').innerText = loggedInStudent.name;
+    document.getElementById('rClassName').innerText = loggedInStudent.class;
+}
 
-    window.render = () => {
-        const root = document.getElementById('app-root');
-        if (!root) return; root.innerHTML = '';
-        let stats = { total: 0, sum: 0, done: 0, work: 0, none: 0 };
+function calculateStudentPoints(sEvals) {
+    let pts = 0;
+    if (!sEvals) return pts;
+    for (let eKey in sEvals) {
+        let ev = sEvals[eKey];
+        let lvl = (ev.level || ev.evaluation || "").toString().toLowerCase();
+        let aw = (ev.award || "").toString().toLowerCase();
+        
+        if (lvl === 'exc' || lvl.includes('تميز')) pts += 2;
+        if (lvl === 'cre' || lvl.includes('مبدع')) pts += 4;
+        if (lvl === 'vgood' || lvl.includes('جيد جدا')) pts += 2;
+        if (lvl === 'acc' || lvl === 'good' || lvl.includes('مقبول')) pts += 1;
+        
+        if (aw === 'gold' || aw.includes('ذهب')) pts += 5;
+        if (aw === 'silver' || aw.includes('فضة')) pts += 3;
+        if (aw === 'bronze' || aw.includes('برونز')) pts += 1;
+    }
+    return pts;
+}
 
-        window.appState.domains?.forEach((dom, dIdx) => {
-            let html = `
-                <div class="domain-wrapper">
-                    <div class="domain-header">
-                        <div class="domain-title">
-                            <i class="fas fa-layer-group"></i> ${dom.title}
-                            <i class="fas fa-edit edit-btn action-btn" style="font-size:1rem" onclick="editDomain(${dIdx})"></i>
-                            <i class="fas fa-trash-alt action-btn" style="font-size:1rem" onclick="deleteDomain(${dIdx})"></i>
-                        </div>
-                        <button class="btn btn-secondary" onclick="addKPI(${dIdx})">+ مؤشر جديد</button>
-                    </div>
-            `;
+function requestReport() {
+    document.querySelector('.main-action-btn').style.display = 'none';
+    const reportSection = document.getElementById('report-section');
+    reportSection.style.display = 'block';
 
-            dom.kpis?.forEach((kpi, kIdx) => {
-                stats.total++;
-                const tasks = kpi.tasks || [];
-                const dCount = tasks.filter(t => t.done).length;
-                const autoPerc = tasks.length > 0 ? Math.round((dCount / tasks.length) * 100) : 0;
-                let curStatus = kpi.manualStatus || (autoPerc === 100 ? 'done' : (autoPerc > 0 ? 'work' : 'none'));
-                stats.sum += (curStatus === 'done' ? 100 : (curStatus === 'work' ? 50 : 0));
-                stats[curStatus]++;
+    const clsName = loggedInStudent.class;
+    const stdKey = loggedInStudent.id;
 
-                const kId = `k-${dIdx}-${kIdx}`;
-                const isOpen = window.appState.expandedIds?.includes(kId);
+    let classEvals = localData.evaluations[clsName] || {};
+    let classScores = [];
+    
+    for (let key in localData.students) {
+        if (localData.students[key].className === clsName) {
+            let pts = calculateStudentPoints(classEvals[key]);
+            classScores.push({ id: key, score: pts });
+        }
+    }
+    
+    classScores.sort((a, b) => b.score - a.score); 
+    
+    let currentRank = 1;
+    let previousScore = null;
+    for (let i = 0; i < classScores.length; i++) {
+        if (previousScore !== null && classScores[i].score < previousScore) {
+            currentRank++;
+        }
+        classScores[i].rank = currentRank;
+        previousScore = classScores[i].score;
+    }
 
-                html += `
-                    <div class="kpi-item">
-                        <div class="kpi-main" onclick="toggleView('${kId}')">
-                            <i class="fas fa-chevron-${isOpen?'up':'down'}" style="color:#94a3b8"></i>
-                            <div style="font-weight:700;">${kpi.name}</div>
-                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${autoPerc}%; background:${autoPerc===100?'var(--success)':'var(--primary)'}"></div></div>
-                            <div style="font-weight:900; color:var(--primary)">${autoPerc}%</div>
-                            <div class="status-badge st-${curStatus}">${curStatus==='done'?'مكتملة':(curStatus==='work'?'جاري':'مطلوب')}</div>
-                        </div>
-                        <div class="kpi-details" style="display:${isOpen?'block':'none'}">
-                            <div style="margin:20px 0; display:flex; justify-content:space-between">
-                                <div style="display:flex; gap:10px; align-items:center">
-                                    <small>الحالة:</small>
-                                    <button class="status-badge st-done" onclick="setStatus(${dIdx},${kIdx},'done')">مكتمل</button>
-                                    <button class="status-badge st-work" onclick="setStatus(${dIdx},${kIdx},'work')">جاري</button>
-                                    <button class="status-badge st-none" onclick="setStatus(${dIdx},${kIdx},'none')">مطلوب</button>
-                                </div>
-                                <div>
-                                    <i class="fas fa-edit edit-btn action-btn" onclick="editKPI(${dIdx},${kIdx})"></i>
-                                    <i class="fas fa-trash-alt action-btn" onclick="deleteKPI(${dIdx},${kIdx})"></i>
-                                </div>
-                            </div>
-                            <div class="tasks-grid">
-                                ${tasks.map((t, tIdx) => `
-                                    <div class="task-card ${t.done?'active':''}">
-                                        <div onclick="toggleTask(${dIdx},${kIdx},${tIdx})" style="flex:1; display:flex; gap:10px; align-items:center">
-                                            <i class="${t.done?'fas fa-check-circle':'far fa-circle'}"></i> <span>${t.text}</span>
-                                        </div>
-                                        <i class="fas fa-times action-btn" onclick="deleteTask(${dIdx},${kIdx},${tIdx})"></i>
-                                    </div>
-                                `).join('')}
-                                <div class="task-card" style="border:1px dashed var(--primary); color:var(--primary); justify-content:center" onclick="addTask(${dIdx},${kIdx})">+ إضافة مهمة</div>
-                            </div>
-                            <div class="evidence-box">
-                                <div style="display:flex; justify-content:space-between; align-items:center">
-                                    <h5 style="margin:0"><i class="fas fa-paperclip"></i> الشواهد والأدلة:</h5>
-                                    <button class="btn btn-secondary" style="padding:5px 15px" onclick="addEvidence(${dIdx},${kIdx})">+ شاهد جديد</button>
-                                </div>
-                                <div style="margin-top:10px">
-                                    ${(kpi.evidence || []).map((e, eIdx) => `
-                                        <span class="evidence-link">
-                                            <a href="${e.url}" target="_blank">${e.title}</a>
-                                            <i class="fas fa-trash-alt action-btn" style="font-size:0.7rem" onclick="deleteEvidence(${dIdx},${kIdx},${eIdx})"></i>
-                                        </span>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            root.innerHTML += html + `</div>`;
+    let studentRank = "-";
+    let studentPts = 0;
+    let studentInfo = classScores.find(s => s.id === stdKey);
+    
+    if (studentInfo) {
+        studentPts = studentInfo.score;
+        studentRank = studentInfo.rank;
+    }
+
+    const studentEvals = classEvals[stdKey] || {};
+    
+    let totalHw = 0, doneHw = 0;
+    let tagsList = [];
+    let doneHwList = [];
+    let notDoneHwList = [];
+    let positiveNotes = [];
+    let negativeNotes = [];
+    let generalNotes = [];
+    
+    for(let eKey in studentEvals) {
+        let ev = studentEvals[eKey];
+        let hwText = ev.assignmentName || ev.homework || ev.title || "";
+        let lvl = (ev.level || ev.evaluation || "").toString().toLowerCase();
+        let aw = (ev.award || "").toString().toLowerCase();
+        
+        let rawNote = ev.notes || ev.note || ev.teacherNote || ev.remark || ev.comment || ev.details || ev.description || ev.text || ev.message || ev['ملاحظات'] || ev['ملاحظة'] || "";
+        let subject = ev.subject || ev.subjectName || ev.course || ev['المادة'] || "";
+        
+        if (hwText.trim() !== '') {
+            totalHw++;
+            if (ev.hwStatus === 'done' || ev.status === 'done' || ev.hwStatus === true || lvl === 'exc' || lvl.includes('تميز')) { 
+                doneHw++; 
+                doneHwList.push(subject ? `${hwText} في مادة ${subject}` : hwText);
+            } else {
+                notDoneHwList.push(subject ? `${hwText} في مادة ${subject}` : hwText);
+            }
+        }
+
+        if (lvl === 'exc' || lvl.includes('تميز')) tagsList.push("وسام التميز الرقمي");
+        if (lvl === 'cre' || lvl.includes('مبدع')) tagsList.push("وسام الإبداع الأكاديمي");
+        if (lvl === 'vgood' || lvl.includes('جيد جدا')) tagsList.push("وسام الاجتهاد والمواظبة");
+        if (aw === 'gold' || aw.includes('ذهب')) tagsList.push("الوسام الذهبي");
+        if (aw === 'silver' || aw.includes('فضة')) tagsList.push("الوسام الفضي");
+
+        let noteText = String(rawNote).trim();
+        if (noteText !== '') {
+            let fullNote = subject ? `في مادة ${subject}: ${noteText}` : noteText;
+            
+            let isPos = lvl === 'exc' || lvl.includes('تميز') || lvl === 'cre' || lvl.includes('مبدع') || lvl === 'vgood' || lvl.includes('جيد جدا');
+            let isNeg = lvl === 'weak' || lvl.includes('ضعيف') || lvl.includes('انذار') || lvl.includes('غياب');
+            
+            let posKeywords = ['ممتاز', 'ابداع', 'رائع', 'بطل', 'متميز', 'أنجز', 'مشاركة', 'مبادر', 'تحسن'];
+            let negKeywords = ['ضعيف', 'إهمال', 'تأخر', 'غياب', 'إنذار', 'ناقص', 'غير مهتم']; 
+
+            if (!isPos && !isNeg) {
+                if (posKeywords.some(kw => noteText.includes(kw))) isPos = true;
+                else if (negKeywords.some(kw => noteText.includes(kw))) isNeg = true;
+            }
+
+            if (isPos) positiveNotes.push(fullNote);
+            else if (isNeg) negativeNotes.push(fullNote); 
+            else generalNotes.push(fullNote);
+        }
+    }
+
+    let hwPercentage = totalHw === 0 ? 100 : Math.round((doneHw / totalHw) * 100);
+    const firstName = loggedInStudent.name.split(' ')[0];
+
+    // ========================================================
+    // صياغة حوارية طبيعية جداً للتقرير الشامل
+    // ========================================================
+    let rankDesc = (studentRank === 1) ? "المركز الأول" : (studentRank === 2) ? "المركز الثاني" : (studentRank === 3) ? "المركز الثالث" : `المركز ${studentRank}`;
+    
+    let completeTTSReport = `يا أهلاً وسهلاً بك يا ${firstName}، أتمنى أنك تكون بأفضل صحة وعافية.\n\n`;
+    
+    if (studentRank === 1) {
+        completeTTSReport += `ما شاء الله تبارك الله يا بطل! أنت متصدر الفصل حالياً في ${rankDesc} وعندك ${studentPts} نقطة، أداء يرفع الرأس بجد!\n\n`;
+    } else if (studentRank <= 3) {
+        completeTTSReport += `إنجاز بطل! أنت من الأوائل وفي ${rankDesc} على مستوى الفصل برصيد ${studentPts} نقطة، كفو عليك واستمر على هالمستوى.\n\n`;
+    } else {
+        completeTTSReport += `رصيدك حالياً ${studentPts} نقطة، وجاي في ${rankDesc} على مستوى الفصل. قدامك فرصة كبيرة عشان تتقدم للمراكز الأولى، وأنا واثق جداً في قدراتك.\n\n`;
+    }
+    
+    completeTTSReport += `خلنا نتكلم عن الواجبات.. نسبة إنجازك الحين وصلت ${hwPercentage} بالمئة. `;
+    
+    if (doneHwList.length > 0) {
+        let doneTextJoined = doneHwList.join('، وعندك أيضاً ');
+        completeTTSReport += `بالنسبة للمهام اللي أتممتها، أبدعت فيها وأكملتها بالشكل المطلوب ما شاء الله عليك، مثل: ${doneTextJoined}. يعطيك ألف عافية على هذا الالتزام! `;
+    }
+
+    if (notDoneHwList.length > 0) {
+        let notDoneJoined = notDoneHwList.join('، وأيضاً ');
+        completeTTSReport += `\n\nلكن لا تنسى بعض الواجبات ترى إلى الحين ما حليتها، مثل: ${notDoneJoined}. ترى المعلم ذكر إنك ما حليته إلى الحين، ولو كنت مكانك بحله بسرعة وبروح أسأل المعلم مرة ثانية بحيث ما تفوتك ولا درجة!\n\n`;
+        completeTTSReport += `وش الملهيك يا ${firstName}؟ ترى الألعاب والسوني بيلهيك عن دراستك ومستقبلك، وأنا لو كنت مكانك ما راح أخلي أي شيء يلهيني عن دراستي وتفوقي.\n\n`;
+    } else if (doneHwList.length > 0) {
+        completeTTSReport += `وفوق هذا كله، ما خليت عليك ولا واجب متبقي، بطل وكفو عليك لأنك منظم وقتك تماماً!\n\n`;
+    }
+
+    if (tagsList.length > 0) {
+        let uniqueTags = [...new Set(tagsList)];
+        completeTTSReport += `وترى جهودك هذه ما راحت بلاش، حصلت على أوسمة ممتازة وتستاهلها وهي: ${uniqueTags.join('، و')}.\n\n`;
+    }
+
+    if (positiveNotes.length > 0) {
+        completeTTSReport += `معلموك أثنوا على أداؤك وقالوا: ${positiveNotes.join('، و')}.\n\n`;
+    }
+    if (negativeNotes.length > 0) {
+        completeTTSReport += `وبالنسبة للنقاط اللي نحتاج نركز عليها سوياً عشان نطور مستواك: ${negativeNotes.join('، و')}.\n\n`;
+    }
+    
+    completeTTSReport += `شد حيلك يا ${firstName} وتذكر دائماً أن مستقبلك وتفوقك يهمنا جداً، ونبي نشوفك دائماً في أعلى المراتب!`;
+
+    document.getElementById('ttsReportContent').innerText = completeTTSReport;
+
+    document.getElementById('studentPoints').innerText = studentPts;
+    
+    setTimeout(() => {
+        const bar = document.getElementById('hwProgressBar');
+        bar.style.width = hwPercentage + '%';
+        if(hwPercentage >= 80) bar.style.background = 'var(--success)';
+        else if (hwPercentage >= 50) bar.style.background = 'var(--secondary)';
+        else bar.style.background = 'var(--danger)';
+    }, 100);
+    document.getElementById('hwProgressText').innerText = hwPercentage + '%';
+
+    const rankEl = document.getElementById('studentRank');
+    if (studentRank === 1) rankEl.innerHTML = 'المركز: الأول 🥇';
+    else if (studentRank === 2) rankEl.innerHTML = 'المركز: الثاني 🥈';
+    else if (studentRank === 3) rankEl.innerHTML = 'المركز: الثالث 🥉';
+    else if (studentRank !== "-") rankEl.innerHTML = `المركز: ${studentRank} 🎖️`;
+    else rankEl.innerHTML = 'المركز: غير مصنف';
+
+    const emojiEl = document.getElementById('counselorEmoji');
+    const msgEl = document.getElementById('counselorMessage');
+    if (studentPts >= 5 && hwPercentage >= 80) {
+        emojiEl.innerText = '🤩';
+        msgEl.innerText = 'أداء استثنائي! تقييم مستواك مرتفع جداً، استمر في هذا التميز.';
+        msgEl.style.color = 'var(--success)';
+    } else if (studentPts > 0 || hwPercentage >= 60) {
+        emojiEl.innerText = '😊';
+        msgEl.innerText = 'مستوى جيد ومبشر. قليل من الجهد الإضافي وستصل للقمة.';
+        msgEl.style.color = 'var(--primary)';
+    } else {
+        emojiEl.innerText = '🧐';
+        msgEl.innerText = 'نحتاج لمراجعة تقييم مستواك. المستشار يثق بقدرتك على إنجاز المهام المطلوبة.';
+        msgEl.style.color = 'var(--secondary)'; 
+    }
+
+    const tagsContainer = document.getElementById('studentTags');
+    if(tagsList.length > 0) {
+        let tagCounts = {};
+        tagsList.forEach(t => tagCounts[t] = (tagCounts[t] || 0) + 1);
+        let tagsHtml = '';
+        for(let t in tagCounts) {
+            tagsHtml += `<span class="tag">${t} <span style="background:var(--primary);color:white;padding:2px 6px;border-radius:50%;font-size:12px;margin-right:5px;">${tagCounts[t]}</span></span>`;
+        }
+        tagsContainer.innerHTML = tagsHtml;
+    } else {
+        tagsContainer.innerHTML = '<span style="color:#64748b; font-size: 15px;">لا توجد إنجازات مسجلة حتى الآن.</span>';
+    }
+
+    const notesContainer = document.getElementById('notesContainer');
+    let notesHtml = '';
+    
+    if (positiveNotes.length > 0) {
+        notesHtml += `
+        <div class="note-box note-positive">
+            <div class="note-title">🌟 إشادات تؤكد ارتفاع مستوى الطالب:</div>
+            <ul class="note-list">${positiveNotes.map(n => `<li>${n}</li>`).join('')}</ul>
+        </div>`;
+    }
+    if (negativeNotes.length > 0) {
+        notesHtml += `
+        <div class="note-box note-negative">
+            <div class="note-title">⚠️ تقييمات تستدعي المراجعة لتحسين المستوى:</div>
+            <ul class="note-list">${negativeNotes.map(n => `<li>${n}</li>`).join('')}</ul>
+        </div>`;
+    }
+    if (generalNotes.length > 0) {
+        notesHtml += `
+        <div class="note-box note-general">
+            <div class="note-title">📌 توجيهات عامة للارتقاء بالمستوى:</div>
+            <ul class="note-list">${generalNotes.map(n => `<li>${n}</li>`).join('')}</ul>
+        </div>`;
+    }
+    
+    if (notesHtml === '') {
+        notesHtml = `
+        <div class="note-box" style="border-right-color: #94a3b8; background: #f8fafc;">
+            <div class="note-title" style="color: #475569;">💡 تحديث تقييم المستوى:</div>
+            <p style="margin: 0; color: #64748b; font-weight: 600; font-size: 15px;">
+                لم يتم تدوين أي تقييمات كتابية إضافية من قبل المعلمين في السجل الحالي لهذا الأسبوع.
+            </p>
+        </div>`;
+    }
+    notesContainer.innerHTML = notesHtml;
+
+    const hwDoneList = document.getElementById('hwDoneList');
+    const hwNotDoneList = document.getElementById('hwNotDoneList');
+    
+    if (doneHwList.length > 0) {
+        hwDoneList.innerHTML = doneHwList.map(h => `<li>${h}</li>`).join('');
+    } else {
+        hwDoneList.innerHTML = '<li style="color:#64748b; list-style:none;">لا يوجد مهام منجزة مسجلة.</li>';
+    }
+
+    if (notDoneHwList.length > 0) {
+        hwNotDoneList.innerHTML = notDoneHwList.map(h => `<li>${h}</li>`).join('');
+    } else {
+        hwNotDoneList.innerHTML = '<li style="color:#64748b; list-style:none;">جميع المهام المطلوبة منجزة! ممتاز.</li>';
+    }
+}
+
+function copyTTSText() {
+    const text = document.getElementById('ttsReportContent').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("تم نسخ النص بنجاح.");
+    }).catch(() => {
+        alert("تعذر النسخ التلقائي، يمكنك تحديد النص ونسخه يدويًا.");
+    });
+}
+
+// =========================================================================
+// الدالة الخاصة بالتشغيل المباشر للصوت
+// =========================================================================
+async function playVoiceReport() {
+    const speechText = document.getElementById('ttsReportContent').innerText;
+    if (!speechText) return;
+
+    const btn = document.querySelector('.btn-audio');
+    const originalBtnHTML = btn.innerHTML;
+    
+    btn.innerHTML = '⏳ جاري جلب الصوت...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'audio/mpeg',
+                'xi-api-key': ELEVENLABS_API_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: speechText,
+                model_id: "eleven_multilingual_v2",
+                voice_settings: {
+                    stability: 0.5,
+                    similarity_boost: 0.5
+                }
+            })
         });
 
-        document.getElementById('total-perc').innerText = (stats.total ? Math.round(stats.sum / stats.total) : 0) + '%';
-        document.getElementById('c-done').innerText = stats.done;
-        document.getElementById('c-work').innerText = stats.work;
-        document.getElementById('c-none').innerText = stats.none;
+        if (!response.ok) {
+            throw new Error('فشل الاتصال بـ ElevenLabs API.');
+        }
+
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        
+        audio.play();
+        
+        audio.onended = () => {
+            btn.innerHTML = originalBtnHTML;
+            btn.disabled = false;
+        };
+
+    } catch (error) {
+        console.error("حدث خطأ:", error);
+        
+        // الانتقال للبديل المجاني إذا فشل الـ API
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(speechText);
+            utterance.lang = 'ar-SA';
+            utterance.onend = () => {
+                btn.innerHTML = originalBtnHTML;
+                btn.disabled = false;
+            };
+            window.speechSynthesis.speak(utterance);
+        } else {
+            btn.innerHTML = originalBtnHTML;
+            btn.disabled = false;
+        }
     }
+}
+
+// =========================================================================
+// دالة التحميل والإرسال للواتساب مع معالجة ذكية للخطأ
+// =========================================================================
+async function convertTextToAudioAPI(text) {
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'audio/mpeg',
+            'xi-api-key': ELEVENLABS_API_KEY,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            text: text,
+            model_id: "eleven_multilingual_v2",
+            voice_settings: {
+                stability: 0.5,
+                similarity_boost: 0.5
+            }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error('فشل الاتصال بـ ElevenLabs API.');
+    }
+
+    const audioBlob = await response.blob();
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = audioUrl;
+    
+    const studentName = (loggedInStudent && loggedInStudent.name) ? loggedInStudent.name.replace(/\s+/g, '_') : "الطالب";
+    downloadLink.download = `تقرير_صوتي_${studentName}.mp3`;
+    
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    setTimeout(() => URL.revokeObjectURL(audioUrl), 10000);
+    
+    return true; 
+}
+
+async function sendToParentWhatsApp() {
+    const reportText = document.getElementById('ttsReportContent').innerText;
+    if (!reportText) {
+        alert("لا يوجد نص للتقرير لإرساله، يرجى استعراض التقرير أولاً.");
+        return;
+    }
+
+    const waBtn = document.querySelector('.btn-whatsapp');
+    const originalBtnHTML = waBtn.innerHTML;
+    
+    waBtn.innerHTML = '⏳ جاري المعالجة...';
+    waBtn.disabled = true;
+
+    try {
+        await convertTextToAudioAPI(reportText);
+        
+        const greeting = `مرحباً بك ولي أمر الطالب/ة: *${loggedInStudent.name}*\n\n`;
+        const attachInstruction = `\n\n📌 *ملاحظة:* تم إرفاق التقرير الصوتي المخصص للطالب في هذه المحادثة (الرجاء الاستماع للمقطع).`;
+        
+        const fullMessage = encodeURIComponent(greeting + reportText + attachInstruction);
+        const whatsappUrl = `https://wa.me/?text=${fullMessage}`;
+        window.open(whatsappUrl, '_blank');
+
+    } catch (error) {
+        console.error("فشل توليد الـ MP3:", error);
+        alert("تعذر استخراج الملف الصوتي التلقائي بسبب قيود باقة ElevenLabs. سيتم تحويلك للواتساب لإرسال التقرير النصي بدلاً من ذلك.");
+        
+        // إرسال النص فقط كبديل ممتاز في حال فشل الصوت
+        const greeting = `مرحباً بك ولي أمر الطالب/ة: *${loggedInStudent.name}*\n\n`;
+        const fullMessage = encodeURIComponent(greeting + reportText);
+        const whatsappUrl = `https://wa.me/?text=${fullMessage}`;
+        window.open(whatsappUrl, '_blank');
+
+    } finally {
+        waBtn.innerHTML = originalBtnHTML;
+        waBtn.disabled = false;
+    }
+}
 </script>
+
 </body>
 </html>
